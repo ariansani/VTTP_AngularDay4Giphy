@@ -23,7 +23,7 @@ export class GiphyService {
         .pipe(
           map((result) => {
             const data = result.data;
-            return data.map((v: any) => v.images.fixed_height.url as string);
+            return data.map((v: any) => v.images.downsized_still.url as string);
           })
         )
     );
