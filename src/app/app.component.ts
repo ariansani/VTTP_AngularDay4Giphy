@@ -1,10 +1,7 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-
-import { lastValueFrom } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { GiphyService } from './services/giphysearch.service';
 import { giphySearch } from './models';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +11,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class AppComponent implements OnInit{
 
   form!:FormGroup
-  
   title = 'day33giphy';
 
 
@@ -34,7 +30,7 @@ export class AppComponent implements OnInit{
   }
   private createForm(): FormGroup{
     return this.fb.group({
-      apiKey: this.fb.control<string>(''),
+      apiKey: this.fb.control<string>(this.getAPIKey(),[Validators.required]),
       results:this.fb.control<number>(10),
       searchTerm: this.fb.control<string>(''),
       rating: this.fb.control<string>(''),
@@ -48,8 +44,20 @@ export class AppComponent implements OnInit{
 
     console.info(giphySearch)
     this.giphySvc.onNewResult.next(await this.giphySvc.getGiphy(giphySearch));
-    
+    this.saveAPIKey(giphySearch.apiKey);
   
+  }
+
+  private getAPIKey():string{
+    let key = localStorage.getItem('apiKey')
+    if(!key)
+      return '';
+    return key;
+
+  }
+
+  private saveAPIKey(key:string){
+    localStorage.setItem('apiKey',key)
   }
 
 }
